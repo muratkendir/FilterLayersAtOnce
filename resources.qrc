@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/filter_multiple_layers_at_once" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
