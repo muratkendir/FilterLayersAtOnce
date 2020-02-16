@@ -180,18 +180,36 @@ class FilterLayersAtOnce:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def clearAllFilters(self):
+        #Tüm görünen katmanları getir
+        layers = QgsProject.instance().layerTreeRoot().children()
+        for katman in layers:
+            layer_name = katman.layer().name()
+            try:
+                katman.layer().setSubsetString('')
+                print(layer_name + ' layer filter is removed.')
+            except:
+                print(layer_name + 'layer filter is not removed.')
+        self.iface.messageBar().pushMessage("Success", "Layers filters has been removed.",level=Qgis.Success, duration=3)
+
+
     def filterAtOnce(self):
         #Tüm görünen katmanları getir
         layers = QgsProject.instance().layerTreeRoot().children()
         fieldName = self.dlg.lineEdit_fieldName.text()
         operator = self.dlg.comboBox.currentText()
         fieldValue = self.dlg.lineEdit_value.text()
-        for katman in layers:
-            try:
-                katman.layer().setSubsetString(str(fieldName)+str(operator)+str(fieldValue))
-            except:
-                print('nothing')
-        self.iface.messageBar().pushMessage("Success", "Layers filtered with following expression(s):"+fieldName+' '+operator+' '+fieldValue,level=Qgis.Success, duration=3)
+        if fieldName is '' or fieldValue is '':
+            self.iface.messageBar().pushMessage("Warning", "You should enter both of field name and value.",level=Qgis.Warning, duration=3)
+        else:
+            for katman in layers:
+                layer_name = katman.layer().name()
+                try:
+                    katman.layer().setSubsetString(str(fieldName)+str(operator)+str(fieldValue))
+                    print(layer_name + ' layer is filtered with given expression.')
+                except:
+                    print(layer_name + 'layer is not filtered.')
+            self.iface.messageBar().pushMessage("Success", "Layers filtered with following expression(s):"+fieldName+' '+operator+' '+fieldValue,level=Qgis.Success, duration=3)
 
 
     def run(self):
@@ -203,6 +221,7 @@ class FilterLayersAtOnce:
             self.first_start = False
             self.dlg = FilterLayersAtOnceDialog()
             self.dlg.pushButton.clicked.connect(self.filterAtOnce)
+            self.dlg.pushButton_2.clicked.connect(self.clearAllFilters)
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
