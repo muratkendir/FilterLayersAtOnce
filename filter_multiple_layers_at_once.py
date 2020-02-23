@@ -205,7 +205,7 @@ class FilterLayersAtOnce:
             for katman in layers:
                 layer_name = katman.layer().name()
                 try:
-                    katman.layer().setSubsetString(str(fieldName)+str(operator)+str(fieldValue))
+                    katman.layer().setSubsetString(str(fieldName)+' '+str(operator)+' '+str(fieldValue))
                     print(layer_name + ' layer is filtered with given expression.')
                 except:
                     print(layer_name + 'layer is not filtered.')
