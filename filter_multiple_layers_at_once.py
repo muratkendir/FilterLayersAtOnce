@@ -167,7 +167,8 @@ class FilterLayersAtOnce:
             text=self.tr(u'Filter All Visible Layers'),
             callback=self.run,
             parent=self.iface.mainWindow())
-
+        #Örnek, siteden alındı, ama qgis menü buttonu hangisi bulmak lazım. (Not: psuhbutton değil.)
+        #MyToolButton.setIcon(QIcon("c:/icons/sample_icon.png"))
         # will be set False in run()
         self.first_start = True
 
@@ -189,7 +190,7 @@ class FilterLayersAtOnce:
                 katman.layer().setSubsetString('')
                 print(layer_name + ' layer filter is removed.')
             except:
-                print(layer_name + 'layer filter is not removed.')
+                print('Nothing changed in ' + layer_name + 'layer.')
         self.iface.messageBar().pushMessage("Success", "Layers filters has been removed.",level=Qgis.Success, duration=3)
 
 
