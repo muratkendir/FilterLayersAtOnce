@@ -25,6 +25,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from qgis.core import QgsProject, Qgis
+from qgis.utils import iface
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -167,8 +168,7 @@ class FilterLayersAtOnce:
             text=self.tr(u'Filter All Visible Layers'),
             callback=self.run,
             parent=self.iface.mainWindow())
-        #Örnek, siteden alındı, ama qgis menü buttonu hangisi bulmak lazım. (Not: psuhbutton değil.)
-        #MyToolButton.setIcon(QIcon("c:/icons/sample_icon.png"))
+
         # will be set False in run()
         self.first_start = True
 
@@ -182,21 +182,21 @@ class FilterLayersAtOnce:
             self.iface.removeToolBarIcon(action)
 
     def clearAllFilters(self):
-        #Tüm görünen katmanları getir
-        layers = QgsProject.instance().layerTreeRoot().children()
+        #Tüm katmanlardaki Filtreleri Temizle
+        layers = QgsProject.instance().mapLayers()
         for katman in layers:
-            layer_name = katman.layer().name()
+            layer_name = layers[katman].name()
             try:
-                katman.layer().setSubsetString('')
+                layers[katman].setSubsetString('')
                 print(layer_name + ' layer filter is removed.')
             except:
-                print('Nothing changed in ' + layer_name + 'layer.')
+                print(layer_name + 'layer filter is not removed.')
         self.iface.messageBar().pushMessage("Success", "Layers filters has been removed.",level=Qgis.Success, duration=3)
 
 
     def filterAtOnce(self):
         #Tüm görünen katmanları getir
-        layers = QgsProject.instance().layerTreeRoot().children()
+        layers = QgsProject.instance().mapLayers()
         fieldName = self.dlg.lineEdit_fieldName.text()
         operator = self.dlg.comboBox.currentText()
         fieldValue = self.dlg.lineEdit_value.text()
@@ -204,14 +204,31 @@ class FilterLayersAtOnce:
             self.iface.messageBar().pushMessage("Warning", "You should enter both of field name and value.",level=Qgis.Warning, duration=3)
         else:
             for katman in layers:
-                layer_name = katman.layer().name()
+                layer_name = layers[katman].name()
                 try:
-                    katman.layer().setSubsetString(str(fieldName)+' '+str(operator)+' '+str(fieldValue))
+                    layers[katman].setSubsetString(str(fieldName)+str(operator)+str(fieldValue))
                     print(layer_name + ' layer is filtered with given expression.')
                 except:
                     print(layer_name + 'layer is not filtered.')
             self.iface.messageBar().pushMessage("Success", "Layers filtered with following expression(s):"+fieldName+' '+operator+' '+fieldValue,level=Qgis.Success, duration=3)
 
+    def filterOnlySelectedsAtOnce(self):
+        #Tüm görünen katmanları getir
+        layers = iface.layerTreeView().selectedLayers()
+        fieldName = self.dlg.lineEdit_fieldName.text()
+        operator = self.dlg.comboBox.currentText()
+        fieldValue = self.dlg.lineEdit_value.text()
+        if fieldName is '' or fieldValue is '':
+            self.iface.messageBar().pushMessage("Warning", "You should enter both of field name and value.",level=Qgis.Warning, duration=3)
+        else:
+            for katman in layers:
+                layer_name = katman.name()
+                try:
+                    katman.setSubsetString(str(fieldName)+str(operator)+str(fieldValue))
+                    print(layer_name + ' layer is filtered with given expression.')
+                except:
+                    print(layer_name + 'layer is not filtered.')
+            self.iface.messageBar().pushMessage("Success", "Layers filtered with following expression(s):"+fieldName+' '+operator+' '+fieldValue,level=Qgis.Success, duration=3)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -223,6 +240,7 @@ class FilterLayersAtOnce:
             self.dlg = FilterLayersAtOnceDialog()
             self.dlg.pushButton.clicked.connect(self.filterAtOnce)
             self.dlg.pushButton_2.clicked.connect(self.clearAllFilters)
+            self.dlg.pushButton_3.clicked.connect(self.filterOnlySelectedsAtOnce)
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
