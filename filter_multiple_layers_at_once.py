@@ -195,7 +195,7 @@ class FilterLayersAtOnce:
 
 
     def filterAtOnce(self):
-        #Tüm görünen katmanları getir
+        #Tüm katmanları getir
         layers = QgsProject.instance().mapLayers()
         fieldName = self.dlg.lineEdit_fieldName.text()
         operator = self.dlg.comboBox.currentText()
@@ -206,8 +206,13 @@ class FilterLayersAtOnce:
             for katman in layers:
                 layer_name = layers[katman].name()
                 try:
-                    layers[katman].setSubsetString(str(fieldName)+str(operator)+str(fieldValue))
-                    print(layer_name + ' layer is filtered with given expression.')
+                    if fieldName in layers[katman].attributeAliases():
+                        layers[katman].setSubsetString(str(fieldName)+str(' ')+str(operator)+str(' ')+str(fieldValue))
+                        print(layer_name + ' layer is filtered with given expression.')
+                        self.iface.messageBar().pushMessage("Success", "<b>"+layer_name + "</b> filtered with following expression(s): <b>"+fieldName+' '+operator+' '+fieldValue+"</b>",level=Qgis.Success, duration=3)
+                    else:
+                        print(layer_name + ' layer does not contain an attribute with ' + fieldName + ' name.')
+                        self.iface.messageBar().pushMessage("Info", "<b>"+layer_name + "</b> layer does not contain an attribute with <b>"+fieldName+"</b> name.",level=Qgis.Info, duration=3)
                 except:
                     print(layer_name + 'layer is not filtered.')
             self.iface.messageBar().pushMessage("Success", "Layers filtered with following expression(s):"+fieldName+' '+operator+' '+fieldValue,level=Qgis.Success, duration=3)
@@ -224,11 +229,15 @@ class FilterLayersAtOnce:
             for katman in layers:
                 layer_name = katman.name()
                 try:
-                    katman.setSubsetString(str(fieldName)+str(operator)+str(fieldValue))
-                    print(layer_name + ' layer is filtered with given expression.')
+                    if fieldName in katman.attributeAliases():
+                        katman.setSubsetString(str(fieldName)+str(' ')+str(operator)+str(' ')+str(fieldValue))
+                        print(layer_name + ' layer is filtered with given expression.')
+                        self.iface.messageBar().pushMessage("Success", "<b>"+layer_name + "</b> filtered with following expression(s): <b>"+fieldName+' '+operator+' '+fieldValue+"</b>",level=Qgis.Success, duration=3)
+                    else:
+                        print(layer_name + ' layer does not contain an attribute with ' + fieldName + ' name.')
+                        self.iface.messageBar().pushMessage("Info", "<b>"+layer_name + "</b> layer does not contain an attribute with <b>"+fieldName+"</b> name.",level=Qgis.Info, duration=3)
                 except:
                     print(layer_name + 'layer is not filtered.')
-            self.iface.messageBar().pushMessage("Success", "Layers filtered with following expression(s):"+fieldName+' '+operator+' '+fieldValue,level=Qgis.Success, duration=3)
 
     def run(self):
         """Run method that performs all the real work"""
