@@ -25,7 +25,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog
 from qgis.core import QgsProject, Qgis
-from qgis.utils import iface
+#from qgis.utils import iface
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -191,7 +191,7 @@ class FilterLayersAtOnce:
                 print(layer_name + ' layer filter is removed.')
             except:
                 print(layer_name + 'layer filter is not removed.')
-        self.iface.messageBar().pushMessage("Success", "Layers filters has been removed.",level=Qgis.Success, duration=3)
+        self.iface.messageBar().pushMessage("Success", "Layers filters has been removed.",level=Qgis.MessageLevel.Success, duration=3)
 
 
     def filterAtOnce(self):
@@ -201,7 +201,7 @@ class FilterLayersAtOnce:
         operator = self.dlg.comboBox.currentText()
         fieldValue = self.dlg.lineEdit_value.text()
         if fieldName is '' or fieldValue is '':
-            self.iface.messageBar().pushMessage("Warning", "You should enter both of field name and value.",level=Qgis.Warning, duration=3)
+            self.iface.messageBar().pushMessage("Warning", "You should enter both of field name and value.",level=Qgis.MessageLevel.Warning, duration=3)
         else:
             for katman in layers:
                 layer_name = layers[katman].name()
@@ -209,13 +209,13 @@ class FilterLayersAtOnce:
                     if fieldName in layers[katman].attributeAliases():
                         layers[katman].setSubsetString(str(fieldName)+str(' ')+str(operator)+str(' ')+str(fieldValue))
                         print(layer_name + ' layer is filtered with given expression.')
-                        self.iface.messageBar().pushMessage("Success", "<b>"+layer_name + "</b> filtered with following expression(s): <b>"+fieldName+' '+operator+' '+fieldValue+"</b>",level=Qgis.Success, duration=3)
+                        self.iface.messageBar().pushMessage("Success", "<b>"+layer_name + "</b> filtered with following expression(s): <b>"+fieldName+' '+operator+' '+fieldValue+"</b>",level=Qgis.MessageLevel.Success, duration=3)
                     else:
                         print(layer_name + ' layer does not contain an attribute with ' + fieldName + ' name.')
-                        self.iface.messageBar().pushMessage("Info", "<b>"+layer_name + "</b> layer does not contain an attribute with <b>"+fieldName+"</b> name.",level=Qgis.Info, duration=3)
+                        self.iface.messageBar().pushMessage("Info", "<b>"+layer_name + "</b> layer does not contain an attribute with <b>"+fieldName+"</b> name.",level=Qgis.MessageLevel.Info, duration=3)
                 except:
                     print(layer_name + 'layer is not filtered.')
-            self.iface.messageBar().pushMessage("Success", "Layers filtered with following expression(s):"+fieldName+' '+operator+' '+fieldValue,level=Qgis.Success, duration=3)
+            self.iface.messageBar().pushMessage("Success", "Layers filtered with following expression(s):"+fieldName+' '+operator+' '+fieldValue,level=Qgis.MessageLevel.Success, duration=3)
 
     def filterOnlySelectedsAtOnce(self):
         #Tüm görünen katmanları getir
@@ -224,7 +224,7 @@ class FilterLayersAtOnce:
         operator = self.dlg.comboBox.currentText()
         fieldValue = self.dlg.lineEdit_value.text()
         if fieldName is '' or fieldValue is '':
-            self.iface.messageBar().pushMessage("Warning", "You should enter both of field name and value.",level=Qgis.Warning, duration=3)
+            self.iface.messageBar().pushMessage("Warning", "You should enter both of field name and value.",level=Qgis.MessageLevel.Warning, duration=3)
         else:
             for katman in layers:
                 layer_name = katman.name()
@@ -232,10 +232,10 @@ class FilterLayersAtOnce:
                     if fieldName in katman.attributeAliases():
                         katman.setSubsetString(str(fieldName)+str(' ')+str(operator)+str(' ')+str(fieldValue))
                         print(layer_name + ' layer is filtered with given expression.')
-                        self.iface.messageBar().pushMessage("Success", "<b>"+layer_name + "</b> filtered with following expression(s): <b>"+fieldName+' '+operator+' '+fieldValue+"</b>",level=Qgis.Success, duration=3)
+                        self.iface.messageBar().pushMessage("Success", "<b>"+layer_name + "</b> filtered with following expression(s): <b>"+fieldName+' '+operator+' '+fieldValue+"</b>",level=Qgis.MessageLevel.Success, duration=3)
                     else:
                         print(layer_name + ' layer does not contain an attribute with ' + fieldName + ' name.')
-                        self.iface.messageBar().pushMessage("Info", "<b>"+layer_name + "</b> layer does not contain an attribute with <b>"+fieldName+"</b> name.",level=Qgis.Info, duration=3)
+                        self.iface.messageBar().pushMessage("Info", "<b>"+layer_name + "</b> layer does not contain an attribute with <b>"+fieldName+"</b> name.",level=Qgis.MessageLevel.Info, duration=3)
                 except:
                     print(layer_name + 'layer is not filtered.')
 
@@ -253,7 +253,7 @@ class FilterLayersAtOnce:
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        result = self.dlg.exec()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and
