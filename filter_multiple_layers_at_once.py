@@ -219,7 +219,7 @@ class FilterLayersAtOnce:
 
     def filterOnlySelectedsAtOnce(self):
         #Tüm görünen katmanları getir
-        layers = iface.layerTreeView().selectedLayers()
+        layers = self.iface.layerTreeView().selectedLayers()
         fieldName = self.dlg.lineEdit_fieldName.text()
         operator = self.dlg.comboBox.currentText()
         fieldValue = self.dlg.lineEdit_value.text()

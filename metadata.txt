@@ -6,7 +6,7 @@
 name=FilterLayersAtOnce
 qgisMinimumVersion=3.0
 description=Filters multiple visible layers at once with attributes
-version=2.0
+version=2.1
 author=Murat Kendir
 email=muratkendir@gmail.com
 
